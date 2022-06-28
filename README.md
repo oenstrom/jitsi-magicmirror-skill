@@ -5,9 +5,15 @@ Start a jitsi meeting on the magicmirror
 Starts a jitsi meeting on the magicmirror. passes the name to the mirror so they can be invited.
 
 ## Examples
-* "Call christoffer"
-* "Start a meeting with christoffer"
-* "Open a meeting with christoffer"
+**sv-se**
+* "ring christoffer"
+* "kontakta olof"
+* "starta ett möte med christoffer"
+
+**en-us**
+* "call christoffer"
+* "start a meeting with christoffer"
+* "open a meeting with christoffer"
 
 ## Credits
 oenstrom
