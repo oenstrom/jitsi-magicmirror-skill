@@ -2,7 +2,8 @@
 Start a jitsi meeting on the magicmirror
 
 ## About
-Starts a jitsi meeting on the magicmirror. Passes the name to the mirror so they can be invited.
+Starts a jitsi meeting on the magicmirror. Passes the name to the mirror so they can be invited.  
+The MagicMirror uses a modified version (private repo) of [https://github.com/nomis6432/MMM-jitsi](https://github.com/nomis6432/MMM-jitsi)
 
 Depends on a MyCroft skill for handling contacts. To be created.
 
