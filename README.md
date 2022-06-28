@@ -2,7 +2,9 @@
 Start a jitsi meeting on the magicmirror
 
 ## About
-Starts a jitsi meeting on the magicmirror. passes the name to the mirror so they can be invited.
+Starts a jitsi meeting on the magicmirror. Passes the name to the mirror so they can be invited.
+
+Depends on a MyCroft skill for handling contacts. To be created.
 
 ## Examples
 **sv-se**
