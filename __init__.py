@@ -14,6 +14,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from mycroft import MycroftSkill, intent_handler
+import requests
 
 class JitsiMagicmirror(MycroftSkill):
     def __init__(self):
@@ -27,6 +28,17 @@ class JitsiMagicmirror(MycroftSkill):
             pass
                 # return self.start_meeting_unspecified_name(message)
         self.speak_dialog("StartMeeting", data={"name": name})
+        try:
+            requests.get("http://localhost:8080/MMM-jitsi/start", {"name": name})
+        except requests.exceptions.RequestException as err:
+            self.speak_dialog("ErrorMirror")
+    
+    @intent_handler("EndMeeting.intent")
+    def end_meeting(self, message):
+        try:
+            requests.get("http://localhost:8080/MMM-jitsi/dispose")
+        except requests.exceptions.RequestException as err:
+            self.speak_dialog("ErrorMirror")
 
     # @intent_handler("UnspecifiedName.intent")
     # def start_meeting_unspecified_name(self, message):
