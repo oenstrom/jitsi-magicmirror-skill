@@ -25,13 +25,9 @@ class JitsiMagicmirror(MycroftSkill):
         name = message.data.get("name", None)
 
         if name is None:
-            pass
-                # return self.start_meeting_unspecified_name(message)
-        self.speak_dialog("StartMeeting", data={"name": name})
-        try:
-            requests.get("http://localhost:8080/MMM-jitsi/start", {"name": name})
-        except requests.exceptions.RequestException as err:
-            self.speak_dialog("ErrorMirror")
+            return self.start_meeting_unspecified_name(message)
+
+        self.__start_meeting(name)
     
     @intent_handler("EndMeeting.intent")
     def end_meeting(self, message):
@@ -40,15 +36,19 @@ class JitsiMagicmirror(MycroftSkill):
         except requests.exceptions.RequestException as err:
             self.speak_dialog("ErrorMirror")
 
-    # @intent_handler("UnspecifiedName.intent")
-    # def start_meeting_unspecified_name(self, message):
-    #     response = self.get_response("Who")
-    #     if response:
-    #         self.__start_meeting(response) # Pass in only the name or the whole response?
+    @intent_handler("UnspecifiedName.intent")
+    def start_meeting_unspecified_name(self, message):
+        response = self.get_response("Who")
+        if response:
+            self.__start_meeting(response) # Pass in only the name or the whole response?
     
     def __start_meeting(self, name):
         # TODO: Get contact based on name. Make request to http://localhost:8080/MMM-jitsi/start and pass the contact information
-        pass
+        try:
+            requests.get("http://localhost:8080/MMM-jitsi/start", {"name": name})
+            self.speak_dialog("StartMeeting", data={"name": name})
+        except requests.exceptions.RequestException as err:
+            self.speak_dialog("ErrorMirror")
 
 def create_skill():
     return JitsiMagicmirror()

@@ -1,2 +1,2 @@
 (call|contact|phone) {name}
-(start|open|create|set)(| up)(| a) meeting(| with) {name}
+(start |open |create |set )(up |)(a |)meeting (with |){name}
