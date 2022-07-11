@@ -14,11 +14,15 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from mycroft import MycroftSkill, intent_handler
-import requests
+from mycroft.skills.api import SkillApi
+from mycroft.messagebus import Message
 
 class JitsiMagicmirror(MycroftSkill):
     def __init__(self):
         MycroftSkill.__init__(self)
+    
+    def initialize(self):
+        self.contacts_skill = SkillApi.get("contacts-skill")
 
     @intent_handler("StartMeeting.intent")
     def start_meeting_with_name(self, message):
@@ -31,24 +35,30 @@ class JitsiMagicmirror(MycroftSkill):
     
     @intent_handler("EndMeeting.intent")
     def end_meeting(self, message):
-        try:
-            requests.get("http://localhost:8080/MMM-jitsi/dispose")
-        except requests.exceptions.RequestException as err:
-            self.speak_dialog("ErrorMirror")
+        self.bus.emit(Message(f"RELAY:MMM-jitsi:JITSI_DISPOSE"))
 
     @intent_handler("UnspecifiedName.intent")
     def start_meeting_unspecified_name(self, message):
         response = self.get_response("Who")
         if response:
-            self.__start_meeting(response) # Pass in only the name or the whole response?
+            self.__start_meeting(response)
     
     def __start_meeting(self, name):
-        # TODO: Get contact based on name. Make request to http://localhost:8080/MMM-jitsi/start and pass the contact information
-        try:
-            requests.get("http://localhost:8080/MMM-jitsi/start", {"name": name})
-            self.speak_dialog("StartMeeting", data={"name": name})
-        except requests.exceptions.RequestException as err:
-            self.speak_dialog("ErrorMirror")
+        best_match = self.contacts_skill.get_best_match(name)
+        if len(best_match) <= 0:
+            self.speak_dialog("NotFound", {"name": name})
+            return
+        elif len(best_match) == 1:
+            contact = {"name": best_match[0][0], "email": best_match[0][1], "phone": best_match[0][2]}
+        else:
+            selection = self.ask_selection([x[2] for x in best_match], "WhoFromSelection")
+            selected = [(name, email, phone) for (name, email, phone, score) in best_match if phone == selection]
+            if len(selected) == 1:
+                contact = {"name": selected[0][0], "email": selected[0][1], "phone": selected[0][2]}
+            else:
+                return
+        self.speak_dialog("StartMeeting", {"name": contact["name"]})
+        self.bus.emit(Message(f"RELAY:MMM-jitsi:JITSI_CALL", contact))
 
 def create_skill():
     return JitsiMagicmirror()
