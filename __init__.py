@@ -35,7 +35,7 @@ class JitsiMagicmirror(MycroftSkill):
     
     @intent_handler("EndMeeting.intent")
     def end_meeting(self, message):
-        self.bus.emit(Message(f"RELAY:MMM-jitsi:JITSI_DISPOSE"))
+        self.bus.emit(Message(f"RELAY:MMM-jitsi2:JITSI_DISPOSE"))
 
     @intent_handler("UnspecifiedName.intent")
     def start_meeting_unspecified_name(self, message):
@@ -58,7 +58,7 @@ class JitsiMagicmirror(MycroftSkill):
             else:
                 return
         self.speak_dialog("StartMeeting", {"name": contact["name"]})
-        self.bus.emit(Message(f"RELAY:MMM-jitsi:JITSI_CALL", contact))
+        self.bus.emit(Message(f"RELAY:MMM-jitsi2:JITSI_CALL", contact))
 
 def create_skill():
     return JitsiMagicmirror()
