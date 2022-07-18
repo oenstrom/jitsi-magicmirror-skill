@@ -45,7 +45,7 @@ class JitsiMagicmirror(MycroftSkill):
     
     def __start_meeting(self, name):
         best_match = self.contacts_skill.get_best_match(name)
-        if len(best_match) <= 0:
+        if not best_match or len(best_match) <= 0:
             self.speak_dialog("NotFound", {"name": name})
             return
         elif len(best_match) == 1:
