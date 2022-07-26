@@ -25,6 +25,7 @@ class JitsiMagicmirror(MycroftSkill):
         self.contacts_skill = SkillApi.get("contacts-skill")
         self.add_event("jitsi-magicmirror-skill:call", self.handle_call_event)
         self.add_event("jitsi-magicmirror-skill:hangup", self.handle_hangup_event)
+        self.disable_intent("EndMeeting.intent")
     
     def handle_call_event(self, message):
         """Request to make a call received over messagebus."""
@@ -74,10 +75,12 @@ class JitsiMagicmirror(MycroftSkill):
             self.__emit_call(contact)
     
     def __emit_call(self, contact):
+        self.enable_intent("EndMeeting.intent")
         self.speak_dialog("StartMeeting", {"name": contact["name"]})
         self.bus.emit(Message(f"RELAY:MMM-jitsi2:JITSI_CALL", contact))
     
     def __emit_hangup(self):
+        self.disable_intent("EndMeeting.intent")
         self.speak_dialog("EndMeeting")
         self.bus.emit(Message(f"RELAY:MMM-jitsi2:JITSI_DISPOSE"))
 
