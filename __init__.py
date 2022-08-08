@@ -22,7 +22,6 @@ class JitsiMagicmirror(MycroftSkill):
         MycroftSkill.__init__(self)
     
     def initialize(self):
-        self.contacts_skill = SkillApi.get("contacts-skill")
         self.add_event("jitsi-magicmirror-skill:call", self.handle_call_event)
         self.add_event("jitsi-magicmirror-skill:hangup", self.handle_hangup_event)
         self.disable_intent("EndMeeting.intent")
@@ -58,7 +57,7 @@ class JitsiMagicmirror(MycroftSkill):
             self.__start_meeting(response)
     
     def __start_meeting(self, name):
-        best_match = self.contacts_skill.get_best_match(name)
+        best_match = SkillApi.get("contacts-skill").get_best_match(name)
         if not best_match or len(best_match) <= 0:
             self.speak_dialog("NotFound", {"name": name})
             return
