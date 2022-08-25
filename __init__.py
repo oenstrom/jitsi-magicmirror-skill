@@ -24,7 +24,7 @@ class JitsiMagicmirror(MycroftSkill):
     def initialize(self):
         self.add_event("jitsi-magicmirror-skill:call", self.handle_call_event)
         self.add_event("jitsi-magicmirror-skill:hangup", self.handle_hangup_event)
-        self.disable_intent("EndMeeting.intent")
+        self.disable_intent("end.meeting.intent")
     
     def handle_call_event(self, message):
         """Request to make a call received over messagebus."""
@@ -37,7 +37,7 @@ class JitsiMagicmirror(MycroftSkill):
         """Request to hang up the call received over messagebus."""
         self.__emit_hangup()
 
-    @intent_handler("StartMeeting.intent")
+    @intent_handler("start.meeting.intent")
     def start_meeting_with_name(self, message):
         name = message.data.get("name", None)
 
@@ -46,11 +46,11 @@ class JitsiMagicmirror(MycroftSkill):
 
         self.__start_meeting(name)
     
-    @intent_handler("EndMeeting.intent")
+    @intent_handler("end.meeting.intent")
     def end_meeting(self, message):
         self.__emit_hangup()
 
-    @intent_handler("UnspecifiedName.intent")
+    @intent_handler("unspecified.name.intent")
     def start_meeting_unspecified_name(self, message):
         response = self.get_response("Who")
         if response:
@@ -74,12 +74,12 @@ class JitsiMagicmirror(MycroftSkill):
             self.__emit_call(contact)
     
     def __emit_call(self, contact):
-        self.enable_intent("EndMeeting.intent")
+        self.enable_intent("end.meeting.intent")
         self.speak_dialog("StartMeeting", {"name": contact["name"]})
         self.bus.emit(Message(f"RELAY:MMM-jitsi2:JITSI_CALL", contact))
     
     def __emit_hangup(self):
-        self.disable_intent("EndMeeting.intent")
+        self.disable_intent("end.meeting.intent")
         self.speak_dialog("EndMeeting")
         self.bus.emit(Message(f"RELAY:MMM-jitsi2:JITSI_DISPOSE"))
 
